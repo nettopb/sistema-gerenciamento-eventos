@@ -1,13 +1,31 @@
 <h2>Novo Evento</h2>
 
-<form>
+<form method="POST" action="/eventos/salvar">
 
-    <input type="text" placeholder="Título"><br><br>
+    <input
+        type="text"
+        name="titulo"
+        placeholder="Título">
 
-    <input type="date"><br><br>
+    <br><br>
 
-    <input type="text" placeholder="Local"><br><br>
+    <input
+        type="date"
+        name="data_evento">
 
-    <button>Salvar</button>
+    <br><br>
+
+    <input
+        type="text"
+        name="local"
+        placeholder="Local">
+
+    <br><br>
+
+    <button>
+
+        Salvar
+
+    </button>
 
 </form>

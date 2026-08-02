@@ -1,5 +1,11 @@
 <?php
 
+require_once '../config/config.php';
+
+require_once '../app/Core/Database.php';
+
+require_once '../app/Core/Router.php';
+
 require "../app/Core/Router.php";
 
 require "../app/Controllers/HomeController.php";

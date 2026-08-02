@@ -26,4 +26,11 @@ class Router
 
         echo "404";
     }
+
+    public function post($uri,$action)
+    {
+
+    $this->routes['POST'][$uri] = $action;
+
+    }
 }
