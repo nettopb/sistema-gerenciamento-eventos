@@ -1,33 +1,91 @@
 <h2>Eventos</h2>
 
 <a href="/eventos/novo">
-
-Novo Evento
-
+    Novo Evento
 </a>
 
 <hr>
 
-<?php foreach($lista as $evento): ?>
+<?php if (isset($_GET['sucesso'])): ?>
 
-<p>
+    <?php if ($_GET['sucesso'] === 'cadastrado'): ?>
 
-<strong>
+        <p>
+            Evento cadastrado com sucesso!
+        </p>
 
-<?= $evento['titulo']; ?>
+    <?php elseif ($_GET['sucesso'] === 'atualizado'): ?>
 
-</strong>
+        <p>
+            Evento atualizado com sucesso!
+        </p>
 
-<br>
+    <?php elseif ($_GET['sucesso'] === 'excluido'): ?>
 
-<?= $evento['data_evento']; ?>
+        <p>
+            Evento excluído com sucesso!
+        </p>
 
-<br>
+    <?php endif; ?>
 
-<?= $evento['local']; ?>
+<?php endif; ?>
 
-</p>
+
+<?php if (isset($_GET['erro'])): ?>
+
+    <p>
+        Ocorreu um erro ao realizar a operação.
+    </p>
+
+<?php endif; ?>
+
 
 <hr>
 
-<?php endforeach; ?>
+
+<?php if (empty($lista)): ?>
+
+    <p>
+        Nenhum evento cadastrado.
+    </p>
+
+<?php else: ?>
+
+    <?php foreach ($lista as $evento): ?>
+
+        <div>
+
+            <h3>
+                <?= htmlspecialchars($evento['titulo']); ?>
+            </h3>
+
+            <p>
+                Data:
+                <?= htmlspecialchars($evento['data_evento']); ?>
+            </p>
+
+            <p>
+                Local:
+                <?= htmlspecialchars($evento['local']); ?>
+            </p>
+
+            <a
+                href="/eventos/editar?id=<?= $evento['id']; ?>">
+                Editar
+            </a>
+
+            |
+
+            <a
+                href="/eventos/excluir?id=<?= $evento['id']; ?>"
+                onclick="return confirm('Deseja realmente excluir este evento?');">
+                Excluir
+            </a>
+
+        </div>
+
+        <hr>
+
+    <?php endforeach; ?>
+
+<?php endif; ?>

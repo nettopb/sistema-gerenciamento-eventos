@@ -1,9 +1,43 @@
 <?php
 
-$router->get('/','HomeController@index');
+// Página inicial
+$router->get(
+    '/',
+    'HomeController@index'
+);
 
-$router->get('/eventos','EventoController@index');
+// Eventos - READ
+$router->get(
+    '/eventos',
+    'EventoController@index'
+);
 
-$router->get('/eventos/novo','EventoController@create');
+// Formulário - CREATE
+$router->get(
+    '/eventos/novo',
+    'EventoController@create'
+);
 
-$router->post('/eventos/salvar','EventoController@store');
+// Salvar - CREATE
+$router->post(
+    '/eventos/salvar',
+    'EventoController@store'
+);
+
+// Formulário - UPDATE
+$router->get(
+    '/eventos/editar',
+    'EventoController@edit'
+);
+
+// Atualizar - UPDATE
+$router->post(
+    '/eventos/atualizar',
+    'EventoController@update'
+);
+
+// DELETE
+$router->get(
+    '/eventos/excluir',
+    'EventoController@delete'
+);
