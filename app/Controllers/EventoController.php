@@ -1,131 +1,70 @@
 <?php
 
-require_once __DIR__ . '/../Models/Evento.php';
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../models/Evento.php';
 
-class EventoController
-{
-    public function index()
-    {
-        $evento = new Evento();
-        $lista = $evento->listar();
+class EventoController {
+    private PDO $db;
+    private Evento $evento;
 
-        require __DIR__ . '/../Views/evento/index.php';
+    public function __construct() {
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->evento = new Evento($this->db);
     }
 
-    public function create()
-    {
-        $erro = null;
-
-        require __DIR__ . '/../Views/evento/create.php';
+    public function index(): void {
+        header('Content-Type: application/json');
+        echo json_encode($this->evento->listar());
     }
 
-    public function store()
-    {
-        $titulo = trim($_POST['titulo'] ?? '');
-        $data = trim($_POST['data_evento'] ?? '');
-        $local = trim($_POST['local'] ?? '');
+    public function show(int $id): void {
+        header('Content-Type: application/json');
+        $resultado = $this->evento->buscarPorId($id);
 
-        if ($titulo === '' || $data === '' || $local === '') {
-            $erro = 'Todos os campos são obrigatórios.';
-            require __DIR__ . '/../Views/evento/create.php';
+        if (!$resultado) {
+            http_response_code(404);
+            echo json_encode(['mensagem' => 'Evento não encontrado.']);
             return;
         }
 
-        if (mb_strlen($titulo) > 150) {
-            $erro = 'O título deve possuir no máximo 150 caracteres.';
-            require __DIR__ . '/../Views/evento/create.php';
-            return;
-        }
-
-        if (mb_strlen($local) > 120) {
-            $erro = 'O local deve possuir no máximo 120 caracteres.';
-            require __DIR__ . '/../Views/evento/create.php';
-            return;
-        }
-
-        $dataValida = DateTime::createFromFormat('Y-m-d', $data);
-
-        if (!$dataValida || $dataValida->format('Y-m-d') !== $data) {
-            $erro = 'Informe uma data válida.';
-            require __DIR__ . '/../Views/evento/create.php';
-            return;
-        }
-
-        $evento = new Evento();
-        $evento->salvar($titulo, $data, $local);
-
-        header('Location: ' . BASE_URL . '/eventos?sucesso=cadastrado');
-        exit;
+        echo json_encode($resultado);
     }
 
-    public function edit()
-    {
-        $id = $_GET['id'] ?? null;
+    public function store(): void {
+        header('Content-Type: application/json');
+        $dados = json_decode(file_get_contents("php://input"), true);
 
-        if (!$id || !filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {
-            header('Location: ' . BASE_URL . '/eventos?erro=invalid_id');
-            exit;
-        }
-
-        $evento = new Evento();
-        $registro = $evento->buscarPorId($id);
-
-        if (!$registro) {
-            header('Location: ' . BASE_URL . '/eventos?erro=not_found');
-            exit;
-        }
-
-        $erro = null;
-
-        require __DIR__ . '/../Views/evento/edit.php';
-    }
-
-    public function update()
-    {
-        $id = $_POST['id'] ?? null;
-        $titulo = trim($_POST['titulo'] ?? '');
-        $data = trim($_POST['data_evento'] ?? '');
-        $local = trim($_POST['local'] ?? '');
-
-        if (!$id || !filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {
-            $erro = 'Identificador inválido.';
-            $registro = compact('id', 'titulo', 'data', 'local');
-            require __DIR__ . '/../Views/evento/edit.php';
+        if (empty($dados['titulo']) || empty($dados['data_inicio']) || empty($dados['data_fim'])) {
+            http_response_code(400);
+            echo json_encode(['mensagem' => 'Campos obrigatórios ausentes.']);
             return;
         }
 
-        if ($titulo === '' || $data === '' || $local === '') {
-            $erro = 'Todos os campos são obrigatórios.';
-            $registro = [
-                'id' => $id,
-                'titulo' => $titulo,
-                'data_evento' => $data,
-                'local' => $local
-            ];
-            require __DIR__ . '/../Views/evento/edit.php';
-            return;
+        $this->evento->titulo = $dados['titulo'];
+        $this->evento->descricao = $dados['descricao'] ?? '';
+        $this->evento->data_inicio = $dados['data_inicio'];
+        $this->evento->data_fim = $dados['data_fim'];
+        $this->evento->local = $dados['local'] ?? '';
+        $this->evento->capacidade = $dados['capacidade'] ?? 0;
+
+        if ($this->evento->criar()) {
+            http_response_code(201);
+            echo json_encode(['mensagem' => 'Evento criado com sucesso.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['mensagem' => 'Erro ao criar evento.']);
         }
-
-        $evento = new Evento();
-        $evento->atualizar($id, $titulo, $data, $local);
-
-        header('Location: ' . BASE_URL . '/eventos?sucesso=atualizado');
-        exit;
     }
 
-    public function delete()
-    {
-        $id = $_POST['id'] ?? null;
+    public function destroy(int $id): void {
+        header('Content-Type: application/json');
 
-        if (!$id || !filter_var($id, FILTER_VALIDATE_INT) || $id <= 0) {
-            header('Location: ' . BASE_URL . '/eventos?erro=invalid_id');
-            exit;
+        if ($this->evento->deletar($id)) {
+            echo json_encode(['mensagem' => 'Evento removido com sucesso.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['mensagem' => 'Erro ao remover evento.']);
         }
-
-        $evento = new Evento();
-        $evento->excluir($id);
-
-        header('Location: ' . BASE_URL . '/eventos?sucesso=excluido');
-        exit;
     }
 }
