@@ -4,6 +4,6 @@ class AuthController
 {
     public function login()
     {
-        require "../app/Views/auth/login.php";
+        require __DIR__ . '/../Views/auth/login.php';
     }
 }

@@ -11,12 +11,13 @@ class Evento
         $this->pdo = Database::conectar();
     }
 
-    // CREATE
     public function salvar($titulo, $data, $local)
     {
-        $sql = "INSERT INTO eventos
-                (titulo, data_evento, local)
-                VALUES (?, ?, ?)";
+        $sql = "
+            INSERT INTO eventos
+            (titulo, data_evento, local)
+            VALUES (?, ?, ?)
+        ";
 
         $stmt = $this->pdo->prepare($sql);
 
@@ -27,38 +28,52 @@ class Evento
         ]);
     }
 
-    // READ
     public function listar()
     {
-        $sql = "SELECT * FROM eventos
-                ORDER BY data_evento ASC";
+        $sql = "
+            SELECT
+                id,
+                titulo,
+                data_evento,
+                local
+            FROM eventos
+            ORDER BY data_evento ASC, id ASC
+        ";
 
-        return $this->pdo
-                    ->query($sql)
-                    ->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->pdo->query($sql);
+
+        return $stmt->fetchAll();
     }
 
-    // READ - buscar um evento
     public function buscarPorId($id)
     {
-        $sql = "SELECT * FROM eventos
-                WHERE id = ?";
+        $sql = "
+            SELECT
+                id,
+                titulo,
+                data_evento,
+                local
+            FROM eventos
+            WHERE id = ?
+        ";
 
         $stmt = $this->pdo->prepare($sql);
 
         $stmt->execute([$id]);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch();
     }
 
-    // UPDATE
     public function atualizar($id, $titulo, $data, $local)
     {
-        $sql = "UPDATE eventos
-                SET titulo = ?,
-                    data_evento = ?,
-                    local = ?
-                WHERE id = ?";
+        $sql = "
+            UPDATE eventos
+            SET
+                titulo = ?,
+                data_evento = ?,
+                local = ?
+            WHERE id = ?
+        ";
 
         $stmt = $this->pdo->prepare($sql);
 
@@ -70,11 +85,12 @@ class Evento
         ]);
     }
 
-    // DELETE
     public function excluir($id)
     {
-        $sql = "DELETE FROM eventos
-                WHERE id = ?";
+        $sql = "
+            DELETE FROM eventos
+            WHERE id = ?
+        ";
 
         $stmt = $this->pdo->prepare($sql);
 

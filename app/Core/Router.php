@@ -18,11 +18,28 @@ class Router
     {
         $method = $_SERVER['REQUEST_METHOD'];
 
-        if (!isset($this->routes[$method][$uri])) {
+        $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
+        $basePath = dirname($scriptName);
 
+        if ($basePath !== '/' && $basePath !== '.') {
+            if (str_starts_with($uri, $basePath)) {
+                $uri = substr($uri, strlen($basePath));
+            }
+        }
+
+        if ($uri === '' || $uri === false) {
+            $uri = '/';
+        }
+
+        if ($uri !== '/') {
+            $uri = rtrim($uri, '/');
+        }
+
+        if (!isset($this->routes[$method][$uri])) {
             http_response_code(404);
 
-            echo "Página não encontrada.";
+            echo '<h1>404</h1>';
+            echo '<p>Página não encontrada.</p>';
 
             return;
         }
@@ -30,10 +47,31 @@ class Router
         [$controllerName, $methodName] =
             explode('@', $this->routes[$method][$uri]);
 
-        require_once __DIR__ .
-            "/../Controllers/{$controllerName}.php";
+        $controllerFile =
+            __DIR__ .
+            '/../Controllers/' .
+            $controllerName .
+            '.php';
+
+        if (!file_exists($controllerFile)) {
+            http_response_code(500);
+
+            echo 'Controller não encontrado.';
+
+            return;
+        }
+
+        require_once $controllerFile;
 
         $controller = new $controllerName();
+
+        if (!method_exists($controller, $methodName)) {
+            http_response_code(500);
+
+            echo 'Método do Controller não encontrado.';
+
+            return;
+        }
 
         $controller->$methodName();
     }

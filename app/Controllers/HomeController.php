@@ -4,6 +4,6 @@ class HomeController
 {
     public function index()
     {
-        require "../app/Views/home/index.php";
+        require __DIR__ . '/../Views/home/index.php';
     }
 }
