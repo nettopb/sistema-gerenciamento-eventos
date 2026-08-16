@@ -18,34 +18,43 @@ class Router
     {
         $method = $_SERVER['REQUEST_METHOD'];
 
-        $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
-        $basePath = dirname($scriptName);
+        $path = parse_url($uri, PHP_URL_PATH);
 
-        if ($basePath !== '/' && $basePath !== '.') {
-            if (str_starts_with($uri, $basePath)) {
-                $uri = substr($uri, strlen($basePath));
-            }
+        if (str_starts_with($path, BASE_PATH)) {
+            $path = substr($path, strlen(BASE_PATH));
         }
 
-        if ($uri === '' || $uri === false) {
-            $uri = '/';
+        if ($path === '' || $path === false) {
+            $path = '/';
         }
 
-        if ($uri !== '/') {
-            $uri = rtrim($uri, '/');
+        if ($path !== '/') {
+            $path = rtrim($path, '/');
         }
 
-        if (!isset($this->routes[$method][$uri])) {
+        if (!isset($this->routes[$method][$path])) {
+
             http_response_code(404);
 
+            echo '<!DOCTYPE html>';
+            echo '<html lang="pt-BR">';
+            echo '<head>';
+            echo '<meta charset="UTF-8">';
+            echo '<title>404</title>';
+            echo '</head>';
+            echo '<body>';
             echo '<h1>404</h1>';
             echo '<p>Página não encontrada.</p>';
+            echo '<p>Rota: ' . htmlspecialchars($path) . '</p>';
+            echo '<p><a href="' . url('/') . '">Voltar ao início</a></p>';
+            echo '</body>';
+            echo '</html>';
 
             return;
         }
 
         [$controllerName, $methodName] =
-            explode('@', $this->routes[$method][$uri]);
+            explode('@', $this->routes[$method][$path]);
 
         $controllerFile =
             __DIR__ .
@@ -54,6 +63,7 @@ class Router
             '.php';
 
         if (!file_exists($controllerFile)) {
+
             http_response_code(500);
 
             echo 'Controller não encontrado.';
@@ -63,9 +73,19 @@ class Router
 
         require_once $controllerFile;
 
+        if (!class_exists($controllerName)) {
+
+            http_response_code(500);
+
+            echo 'Classe do Controller não encontrada.';
+
+            return;
+        }
+
         $controller = new $controllerName();
 
         if (!method_exists($controller, $methodName)) {
+
             http_response_code(500);
 
             echo 'Método do Controller não encontrado.';

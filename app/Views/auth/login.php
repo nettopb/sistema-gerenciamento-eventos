@@ -1,11 +1,65 @@
-<h2>Login</h2>
+<!DOCTYPE html>
 
-<form>
+<html lang="pt-BR">
 
-    <input type="email" placeholder="Email"><br><br>
+<head>
 
-    <input type="password" placeholder="Senha"><br><br>
+    <meta charset="UTF-8">
 
-    <button>Entrar</button>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-</form>
+    <title>Login</title>
+
+</head>
+
+<body>
+
+    <h1>Login</h1>
+
+    <form method="POST" action="<?= url('/login'); ?>">
+
+        <label for="email">
+            E-mail:
+        </label>
+
+        <br>
+
+        <input
+            type="email"
+            id="email"
+            name="email"
+            required>
+
+        <br><br>
+
+        <label for="senha">
+            Senha:
+        </label>
+
+        <br>
+
+        <input
+            type="password"
+            id="senha"
+            name="senha"
+            required>
+
+        <br><br>
+
+        <button type="submit">
+            Entrar
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="<?= url('/'); ?>">
+        Voltar
+    </a>
+
+</body>
+
+</html>

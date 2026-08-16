@@ -1,75 +1,99 @@
-<h2>Editar Evento</h2>
+<!DOCTYPE html>
 
-<?php if (isset($erro)): ?>
+<html lang="pt-BR">
 
-    <p>
-        <?= htmlspecialchars($erro); ?>
-    </p>
+<head>
 
-<?php endif; ?>
+    <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-<form method="POST" action="/eventos/atualizar">
+    <title>Editar Evento</title>
 
-    <input
-        type="hidden"
-        name="id"
-        value="<?= htmlspecialchars($registro['id']); ?>">
+</head>
 
+<body>
 
-    <label>
-        Título:
-    </label>
+    <h1>Editar Evento</h1>
+
+    <?php if (!empty($erro)): ?>
+
+        <p>
+            <?= htmlspecialchars($erro); ?>
+        </p>
+
+    <?php endif; ?>
+
+    <form
+        method="POST"
+        action="<?= url('/eventos/atualizar'); ?>">
+
+        <input
+            type="hidden"
+            name="id"
+            value="<?= (int) $registro['id']; ?>">
+
+        <label for="titulo">
+            Título:
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="titulo"
+            name="titulo"
+            maxlength="150"
+            value="<?= htmlspecialchars($registro['titulo']); ?>"
+            required>
+
+        <br><br>
+
+        <label for="data_evento">
+            Data:
+        </label>
+
+        <br>
+
+        <input
+            type="date"
+            id="data_evento"
+            name="data_evento"
+            value="<?= htmlspecialchars($registro['data_evento']); ?>"
+            required>
+
+        <br><br>
+
+        <label for="local">
+            Local:
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="local"
+            name="local"
+            maxlength="120"
+            value="<?= htmlspecialchars($registro['local']); ?>"
+            required>
+
+        <br><br>
+
+        <button type="submit">
+            Atualizar Evento
+        </button>
+
+    </form>
 
     <br>
 
-    <input
-        type="text"
-        name="titulo"
-        value="<?= htmlspecialchars($registro['titulo']); ?>"
-        required>
+    <a href="<?= url('/eventos'); ?>">
+        Cancelar
+    </a>
 
-    <br><br>
+</body>
 
-
-    <label>
-        Data:
-    </label>
-
-    <br>
-
-    <input
-        type="date"
-        name="data_evento"
-        value="<?= htmlspecialchars($registro['data_evento']); ?>"
-        required>
-
-    <br><br>
-
-
-    <label>
-        Local:
-    </label>
-
-    <br>
-
-    <input
-        type="text"
-        name="local"
-        value="<?= htmlspecialchars($registro['local']); ?>"
-        required>
-
-    <br><br>
-
-
-    <button type="submit">
-        Atualizar
-    </button>
-
-</form>
-
-<br>
-
-<a href="/eventos">
-    Cancelar
-</a>
+</html>

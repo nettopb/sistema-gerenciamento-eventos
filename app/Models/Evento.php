@@ -1,74 +1,103 @@
 <?php
 
-class Evento {
-    private PDO $conn;
-    private string $table = 'eventos';
+require_once __DIR__ . '/../Core/Database.php';
 
-    public int $id;
-    public string $titulo;
-    public string $descricao;
-    public string $data_inicio;
-    public string $data_fim;
-    public string $local;
-    public int $capacidade;
+class Evento
+{
+    private $pdo;
 
-    public function __construct(PDO $db) {
-        $this->conn = $db;
+    public function __construct()
+    {
+        $this->pdo = Database::conectar();
     }
 
-    public function listar(): array {
-        $query = "SELECT * FROM {$this->table} ORDER BY data_inicio ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
+    public function salvar($titulo, $data, $local)
+    {
+        $sql = "
+            INSERT INTO eventos
+            (titulo, data_evento, local)
+            VALUES (?, ?, ?)
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        return $stmt->execute([
+            $titulo,
+            $data,
+            $local
+        ]);
+    }
+
+    public function listar()
+    {
+        $sql = "
+            SELECT
+                id,
+                titulo,
+                data_evento,
+                local
+            FROM eventos
+            ORDER BY data_evento ASC, id ASC
+        ";
+
+        $stmt = $this->pdo->query($sql);
+
         return $stmt->fetchAll();
     }
 
-    public function buscarPorId(int $id): ?array {
-        $query = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $result = $stmt->fetch();
-        return $result ?: null;
+    public function buscarPorId($id)
+    {
+        $sql = "
+            SELECT
+                id,
+                titulo,
+                data_evento,
+                local
+            FROM eventos
+            WHERE id = ?
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([$id]);
+
+        return $stmt->fetch();
     }
 
-    public function criar(): bool {
-        $query = "INSERT INTO {$this->table} (titulo, descricao, data_inicio, data_fim, local, capacidade) 
-                  VALUES (:titulo, :descricao, :data_inicio, :data_fim, :local, :capacidade)";
-        $stmt = $this->conn->prepare($query);
+    public function atualizar(
+        $id,
+        $titulo,
+        $data,
+        $local
+    ) {
+        $sql = "
+            UPDATE eventos
+            SET
+                titulo = ?,
+                data_evento = ?,
+                local = ?
+            WHERE id = ?
+        ";
 
-        $stmt->bindValue(':titulo', htmlspecialchars(strip_tags($this->titulo)));
-        $stmt->bindValue(':descricao', htmlspecialchars(strip_tags($this->descricao)));
-        $stmt->bindValue(':data_inicio', $this->data_inicio);
-        $stmt->bindValue(':data_fim', $this->data_fim);
-        $stmt->bindValue(':local', htmlspecialchars(strip_tags($this->local)));
-        $stmt->bindValue(':capacidade', $this->capacidade, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare($sql);
 
-        return $stmt->execute();
+        return $stmt->execute([
+            $titulo,
+            $data,
+            $local,
+            $id
+        ]);
     }
 
-    public function atualizar(): bool {
-        $query = "UPDATE {$this->table} 
-                  SET titulo = :titulo, descricao = :descricao, data_inicio = :data_inicio, 
-                      data_fim = :data_fim, local = :local, capacidade = :capacidade 
-                  WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
+    public function excluir($id)
+    {
+        $sql = "
+            DELETE FROM eventos
+            WHERE id = ?
+        ";
 
-        $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
-        $stmt->bindValue(':titulo', htmlspecialchars(strip_tags($this->titulo)));
-        $stmt->bindValue(':descricao', htmlspecialchars(strip_tags($this->descricao)));
-        $stmt->bindValue(':data_inicio', $this->data_inicio);
-        $stmt->bindValue(':data_fim', $this->data_fim);
-        $stmt->bindValue(':local', htmlspecialchars(strip_tags($this->local)));
-        $stmt->bindValue(':capacidade', $this->capacidade, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare($sql);
 
-        return $stmt->execute();
-    }
-
-    public function deletar(int $id): bool {
-        $query = "DELETE FROM {$this->table} WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        return $stmt->execute();
+        return $stmt->execute([$id]);
     }
 }

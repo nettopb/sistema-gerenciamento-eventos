@@ -5,12 +5,14 @@ class Controller
     protected function view($view, $data = [])
     {
         extract($data);
+
         require __DIR__ . '/../Views/' . $view . '.php';
     }
 
-    protected function redirect($url)
+    protected function redirect($path)
     {
-        header('Location: ' . BASE_URL . $url);
+        header('Location: ' . url($path));
+
         exit;
     }
 }
