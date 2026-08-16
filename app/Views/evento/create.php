@@ -6,10 +6,6 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
     <title>Novo Evento</title>
 
 </head>
@@ -30,64 +26,72 @@
         method="POST"
         action="<?= url('/eventos/salvar'); ?>">
 
-        <label for="titulo">
-            Título:
-        </label>
+        <p>
 
-        <br>
+            <label for="titulo">
+                Título
+            </label>
 
-        <input
-            type="text"
-            id="titulo"
-            name="titulo"
-            maxlength="150"
-            value="<?= htmlspecialchars($_POST['titulo'] ?? ''); ?>"
-            required>
+            <br>
 
-        <br><br>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                maxlength="150"
+                required
+                value="<?= htmlspecialchars($_POST['titulo'] ?? ''); ?>">
 
-        <label for="data_evento">
-            Data:
-        </label>
+        </p>
 
-        <br>
+        <p>
 
-        <input
-            type="date"
-            id="data_evento"
-            name="data_evento"
-            value="<?= htmlspecialchars($_POST['data_evento'] ?? ''); ?>"
-            required>
+            <label for="data_evento">
+                Data
+            </label>
 
-        <br><br>
+            <br>
 
-        <label for="local">
-            Local:
-        </label>
+            <input
+                type="date"
+                id="data_evento"
+                name="data_evento"
+                required
+                value="<?= htmlspecialchars($_POST['data_evento'] ?? ''); ?>">
 
-        <br>
+        </p>
 
-        <input
-            type="text"
-            id="local"
-            name="local"
-            maxlength="120"
-            value="<?= htmlspecialchars($_POST['local'] ?? ''); ?>"
-            required>
+        <p>
 
-        <br><br>
+            <label for="local">
+                Local
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                id="local"
+                name="local"
+                maxlength="120"
+                required
+                value="<?= htmlspecialchars($_POST['local'] ?? ''); ?>">
+
+        </p>
 
         <button type="submit">
-            Salvar Evento
+            Salvar
         </button>
 
     </form>
 
-    <br>
+    <p>
 
-    <a href="<?= url('/eventos'); ?>">
-        Voltar
-    </a>
+        <a href="<?= url('/eventos'); ?>">
+            Voltar
+        </a>
+
+    </p>
 
 </body>
 

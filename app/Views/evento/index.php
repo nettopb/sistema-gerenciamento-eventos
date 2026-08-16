@@ -18,26 +18,23 @@
 
     <h1>Eventos</h1>
 
-    <?php
-
-    $sucesso = $_GET['sucesso'] ?? null;
-    $erro = $_GET['erro'] ?? null;
-
-    ?>
-
-    <?php if ($sucesso === 'cadastrado'): ?>
+    <?php if (($_GET['sucesso'] ?? '') === 'cadastrado'): ?>
 
         <p>
             Evento cadastrado com sucesso!
         </p>
 
-    <?php elseif ($sucesso === 'atualizado'): ?>
+    <?php endif; ?>
+
+    <?php if (($_GET['sucesso'] ?? '') === 'atualizado'): ?>
 
         <p>
             Evento atualizado com sucesso!
         </p>
 
-    <?php elseif ($sucesso === 'excluido'): ?>
+    <?php endif; ?>
+
+    <?php if (($_GET['sucesso'] ?? '') === 'excluido'): ?>
 
         <p>
             Evento excluído com sucesso!
@@ -45,19 +42,23 @@
 
     <?php endif; ?>
 
-    <?php if ($erro === 'invalid_id'): ?>
+    <?php if (($_GET['erro'] ?? '') === 'id_invalido'): ?>
 
         <p>
-            Identificador do evento inválido.
+            ID do evento inválido.
         </p>
 
-    <?php elseif ($erro === 'not_found'): ?>
+    <?php endif; ?>
+
+    <?php if (($_GET['erro'] ?? '') === 'nao_encontrado'): ?>
 
         <p>
             Evento não encontrado.
         </p>
 
-    <?php elseif ($erro === 'delete'): ?>
+    <?php endif; ?>
+
+    <?php if (($_GET['erro'] ?? '') === 'exclusao'): ?>
 
         <p>
             Não foi possível excluir o evento.
@@ -73,8 +74,6 @@
 
     </p>
 
-    <hr>
-
     <?php if (empty($lista)): ?>
 
         <p>
@@ -85,56 +84,53 @@
 
         <?php foreach ($lista as $evento): ?>
 
-            <article>
-
-                <h2>
-                    <?= htmlspecialchars($evento['titulo']); ?>
-                </h2>
-
-                <p>
-                    <strong>Data:</strong>
-                    <?= htmlspecialchars($evento['data_evento']); ?>
-                </p>
-
-                <p>
-                    <strong>Local:</strong>
-                    <?= htmlspecialchars($evento['local']); ?>
-                </p>
-
-                <p>
-
-                    <a
-                        href="<?= url('/eventos/editar?id=' . (int) $evento['id']); ?>">
-
-                        Editar
-
-                    </a>
-
-                </p>
-
-                <form
-                    method="POST"
-                    action="<?= url('/eventos/excluir'); ?>"
-                    onsubmit="return confirm('Deseja realmente excluir este evento?');">
-
-                    <input
-                        type="hidden"
-                        name="id"
-                        value="<?= (int) $evento['id']; ?>">
-
-                    <button type="submit">
-                        Excluir
-                    </button>
-
-                </form>
-
-            </article>
-
             <hr>
+
+            <h2>
+                <?= htmlspecialchars($evento['titulo']); ?>
+            </h2>
+
+            <p>
+                Data:
+                <?= htmlspecialchars($evento['data_evento']); ?>
+            </p>
+
+            <p>
+                Local:
+                <?= htmlspecialchars($evento['local']); ?>
+            </p>
+
+            <p>
+
+                <a
+                    href="<?= url('/eventos/editar?id=' . (int) $evento['id']); ?>">
+
+                    Editar
+
+                </a>
+
+            </p>
+
+            <form
+                method="POST"
+                action="<?= url('/eventos/excluir'); ?>">
+
+                <input
+                    type="hidden"
+                    name="id"
+                    value="<?= (int) $evento['id']; ?>">
+
+                <button type="submit">
+                    Excluir
+                </button>
+
+            </form>
 
         <?php endforeach; ?>
 
     <?php endif; ?>
+
+    <hr>
 
     <p>
 

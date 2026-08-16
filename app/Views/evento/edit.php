@@ -6,10 +6,6 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
     <title>Editar Evento</title>
 
 </head>
@@ -35,64 +31,72 @@
             name="id"
             value="<?= (int) $registro['id']; ?>">
 
-        <label for="titulo">
-            Título:
-        </label>
+        <p>
 
-        <br>
+            <label for="titulo">
+                Título
+            </label>
 
-        <input
-            type="text"
-            id="titulo"
-            name="titulo"
-            maxlength="150"
-            value="<?= htmlspecialchars($registro['titulo']); ?>"
-            required>
+            <br>
 
-        <br><br>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                maxlength="150"
+                required
+                value="<?= htmlspecialchars($registro['titulo']); ?>">
 
-        <label for="data_evento">
-            Data:
-        </label>
+        </p>
 
-        <br>
+        <p>
 
-        <input
-            type="date"
-            id="data_evento"
-            name="data_evento"
-            value="<?= htmlspecialchars($registro['data_evento']); ?>"
-            required>
+            <label for="data_evento">
+                Data
+            </label>
 
-        <br><br>
+            <br>
 
-        <label for="local">
-            Local:
-        </label>
+            <input
+                type="date"
+                id="data_evento"
+                name="data_evento"
+                required
+                value="<?= htmlspecialchars($registro['data_evento']); ?>">
 
-        <br>
+        </p>
 
-        <input
-            type="text"
-            id="local"
-            name="local"
-            maxlength="120"
-            value="<?= htmlspecialchars($registro['local']); ?>"
-            required>
+        <p>
 
-        <br><br>
+            <label for="local">
+                Local
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                id="local"
+                name="local"
+                maxlength="120"
+                required
+                value="<?= htmlspecialchars($registro['local']); ?>">
+
+        </p>
 
         <button type="submit">
-            Atualizar Evento
+            Atualizar
         </button>
 
     </form>
 
-    <br>
+    <p>
 
-    <a href="<?= url('/eventos'); ?>">
-        Cancelar
-    </a>
+        <a href="<?= url('/eventos'); ?>">
+            Cancelar
+        </a>
+
+    </p>
 
 </body>
 

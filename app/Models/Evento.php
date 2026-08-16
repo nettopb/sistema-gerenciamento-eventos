@@ -13,11 +13,11 @@ class Evento
 
     public function salvar($titulo, $data, $local)
     {
-        $sql = "
+        $sql = '
             INSERT INTO eventos
             (titulo, data_evento, local)
             VALUES (?, ?, ?)
-        ";
+        ';
 
         $stmt = $this->pdo->prepare($sql);
 
@@ -30,7 +30,7 @@ class Evento
 
     public function listar()
     {
-        $sql = "
+        $sql = '
             SELECT
                 id,
                 titulo,
@@ -38,7 +38,7 @@ class Evento
                 local
             FROM eventos
             ORDER BY data_evento ASC, id ASC
-        ";
+        ';
 
         $stmt = $this->pdo->query($sql);
 
@@ -47,7 +47,7 @@ class Evento
 
     public function buscarPorId($id)
     {
-        $sql = "
+        $sql = '
             SELECT
                 id,
                 titulo,
@@ -55,7 +55,7 @@ class Evento
                 local
             FROM eventos
             WHERE id = ?
-        ";
+        ';
 
         $stmt = $this->pdo->prepare($sql);
 
@@ -70,14 +70,14 @@ class Evento
         $data,
         $local
     ) {
-        $sql = "
+        $sql = '
             UPDATE eventos
             SET
                 titulo = ?,
                 data_evento = ?,
                 local = ?
             WHERE id = ?
-        ";
+        ';
 
         $stmt = $this->pdo->prepare($sql);
 
@@ -91,10 +91,10 @@ class Evento
 
     public function excluir($id)
     {
-        $sql = "
+        $sql = '
             DELETE FROM eventos
             WHERE id = ?
-        ";
+        ';
 
         $stmt = $this->pdo->prepare($sql);
 

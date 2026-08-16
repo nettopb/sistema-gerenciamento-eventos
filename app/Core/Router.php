@@ -20,8 +20,10 @@ class Router
 
         $path = parse_url($uri, PHP_URL_PATH);
 
-        if (str_starts_with($path, BASE_PATH)) {
-            $path = substr($path, strlen(BASE_PATH));
+        $basePath = BASE_PATH;
+
+        if (str_starts_with($path, $basePath)) {
+            $path = substr($path, strlen($basePath));
         }
 
         if ($path === '' || $path === false) {
@@ -36,19 +38,12 @@ class Router
 
             http_response_code(404);
 
-            echo '<!DOCTYPE html>';
-            echo '<html lang="pt-BR">';
-            echo '<head>';
-            echo '<meta charset="UTF-8">';
-            echo '<title>404</title>';
-            echo '</head>';
-            echo '<body>';
-            echo '<h1>404</h1>';
-            echo '<p>Página não encontrada.</p>';
-            echo '<p>Rota: ' . htmlspecialchars($path) . '</p>';
+            echo '<h1>404 - Rota não encontrada</h1>';
+            echo '<p>Método: ' . htmlspecialchars($method) . '</p>';
+            echo '<p>URI: ' . htmlspecialchars($uri) . '</p>';
+            echo '<p>Rota processada: ' . htmlspecialchars($path) . '</p>';
+
             echo '<p><a href="' . url('/') . '">Voltar ao início</a></p>';
-            echo '</body>';
-            echo '</html>';
 
             return;
         }
@@ -66,21 +61,14 @@ class Router
 
             http_response_code(500);
 
-            echo 'Controller não encontrado.';
+            echo '<h1>Erro</h1>';
+            echo '<p>Controller não encontrado:</p>';
+            echo '<p>' . htmlspecialchars($controllerFile) . '</p>';
 
             return;
         }
 
         require_once $controllerFile;
-
-        if (!class_exists($controllerName)) {
-
-            http_response_code(500);
-
-            echo 'Classe do Controller não encontrada.';
-
-            return;
-        }
 
         $controller = new $controllerName();
 
@@ -88,7 +76,13 @@ class Router
 
             http_response_code(500);
 
-            echo 'Método do Controller não encontrado.';
+            echo '<h1>Erro</h1>';
+            echo '<p>Método não encontrado:</p>';
+            echo '<p>' .
+                htmlspecialchars(
+                    $controllerName . '@' . $methodName
+                ) .
+                '</p>';
 
             return;
         }

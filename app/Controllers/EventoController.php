@@ -63,36 +63,36 @@ class EventoController
             $dataValida->format('Y-m-d') !== $data
         ) {
 
-            $erro = 'Informe uma data válida.';
+            $erro = 'Data inválida.';
 
             require __DIR__ . '/../Views/evento/create.php';
 
             return;
         }
 
-        try {
+        $evento = new Evento();
 
-            $evento = new Evento();
+        $resultado = $evento->salvar(
+            $titulo,
+            $data,
+            $local
+        );
 
-            $evento->salvar(
-                $titulo,
-                $data,
-                $local
-            );
-
-            header(
-                'Location: ' .
-                url('/eventos?sucesso=cadastrado')
-            );
-
-            exit;
-
-        } catch (PDOException $e) {
+        if (!$resultado) {
 
             $erro = 'Não foi possível cadastrar o evento.';
 
             require __DIR__ . '/../Views/evento/create.php';
+
+            return;
         }
+
+        header(
+            'Location: ' .
+            url('/eventos?sucesso=cadastrado')
+        );
+
+        exit;
     }
 
     public function edit()
@@ -107,7 +107,7 @@ class EventoController
 
             header(
                 'Location: ' .
-                url('/eventos?erro=invalid_id')
+                url('/eventos?erro=id_invalido')
             );
 
             exit;
@@ -121,7 +121,7 @@ class EventoController
 
             header(
                 'Location: ' .
-                url('/eventos?erro=not_found')
+                url('/eventos?erro=nao_encontrado')
             );
 
             exit;
@@ -153,7 +153,7 @@ class EventoController
             $id <= 0
         ) {
 
-            $erro = 'Identificador do evento inválido.';
+            $erro = 'ID do evento inválido.';
 
             require __DIR__ . '/../Views/evento/edit.php';
 
@@ -197,50 +197,49 @@ class EventoController
             $dataValida->format('Y-m-d') !== $data
         ) {
 
-            $erro = 'Informe uma data válida.';
+            $erro = 'Data inválida.';
 
             require __DIR__ . '/../Views/evento/edit.php';
 
             return;
         }
 
-        try {
+        $evento = new Evento();
 
-            $evento = new Evento();
+        $registroExistente =
+            $evento->buscarPorId($id);
 
-            $registroExistente =
-                $evento->buscarPorId($id);
+        if (!$registroExistente) {
 
-            if (!$registroExistente) {
+            $erro = 'Evento não encontrado.';
 
-                header(
-                    'Location: ' .
-                    url('/eventos?erro=not_found')
-                );
+            require __DIR__ . '/../Views/evento/edit.php';
 
-                exit;
-            }
+            return;
+        }
 
-            $evento->atualizar(
-                $id,
-                $titulo,
-                $data,
-                $local
-            );
+        $resultado = $evento->atualizar(
+            $id,
+            $titulo,
+            $data,
+            $local
+        );
 
-            header(
-                'Location: ' .
-                url('/eventos?sucesso=atualizado')
-            );
-
-            exit;
-
-        } catch (PDOException $e) {
+        if (!$resultado) {
 
             $erro = 'Não foi possível atualizar o evento.';
 
             require __DIR__ . '/../Views/evento/edit.php';
+
+            return;
         }
+
+        header(
+            'Location: ' .
+            url('/eventos?sucesso=atualizado')
+        );
+
+        exit;
     }
 
     public function delete()
@@ -255,45 +254,43 @@ class EventoController
 
             header(
                 'Location: ' .
-                url('/eventos?erro=invalid_id')
+                url('/eventos?erro=id_invalido')
             );
 
             exit;
         }
 
-        try {
+        $evento = new Evento();
 
-            $evento = new Evento();
+        $registro = $evento->buscarPorId($id);
 
-            $registro = $evento->buscarPorId($id);
-
-            if (!$registro) {
-
-                header(
-                    'Location: ' .
-                    url('/eventos?erro=not_found')
-                );
-
-                exit;
-            }
-
-            $evento->excluir($id);
+        if (!$registro) {
 
             header(
                 'Location: ' .
-                url('/eventos?sucesso=excluido')
-            );
-
-            exit;
-
-        } catch (PDOException $e) {
-
-            header(
-                'Location: ' .
-                url('/eventos?erro=delete')
+                url('/eventos?erro=nao_encontrado')
             );
 
             exit;
         }
+
+        $resultado = $evento->excluir($id);
+
+        if (!$resultado) {
+
+            header(
+                'Location: ' .
+                url('/eventos?erro=exclusao')
+            );
+
+            exit;
+        }
+
+        header(
+            'Location: ' .
+            url('/eventos?sucesso=excluido')
+        );
+
+        exit;
     }
 }
