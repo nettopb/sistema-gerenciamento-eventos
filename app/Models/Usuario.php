@@ -1,44 +1,60 @@
 <?php
 
-class Usuario {
-    private PDO $conn;
-    private string $table = 'usuarios';
+require_once __DIR__ . '/../Core/Database.php';
 
-    public int $id;
-    public string $nome;
-    public string $email;
-    public string $senha;
+class Usuario
+{
+    private $pdo;
 
-    public function __construct(PDO $db) {
-        $this->conn = $db;
+    public function __construct()
+    {
+        $this->pdo = Database::conectar();
     }
 
-    public function cadastrar(): bool {
-        $query = "INSERT INTO {$this->table} (nome, email, senha) VALUES (:nome, :email, :senha)";
-        $stmt = $this->conn->prepare($query);
+    public function buscarPorEmail($email)
+    {
+        $sql = '
+            SELECT
+                id,
+                nome,
+                email,
+                senha,
+                perfil
+            FROM usuarios
+            WHERE email = ?
+            LIMIT 1
+        ';
 
-        $senhaHash = password_hash($this->senha, PASSWORD_ARGON2ID);
+        $stmt =
+            $this->pdo->prepare($sql);
 
-        $stmt->bindValue(':nome', htmlspecialchars(strip_tags($this->nome)));
-        $stmt->bindValue(':email', filter_var($this->email, FILTER_SANITIZE_EMAIL));
-        $stmt->bindValue(':senha', $senhaHash);
+        $stmt->execute([
+            $email
+        ]);
 
-        return $stmt->execute();
+        return $stmt->fetch();
     }
 
-    public function autenticar(string $email, string $senha): ?array {
-        $query = "SELECT * FROM {$this->table} WHERE email = :email LIMIT 1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':email', filter_var($email, FILTER_SANITIZE_EMAIL));
-        $stmt->execute();
+    public function buscarPorId($id)
+    {
+        $sql = '
+            SELECT
+                id,
+                nome,
+                email,
+                perfil
+            FROM usuarios
+            WHERE id = ?
+            LIMIT 1
+        ';
 
-        $usuario = $stmt->fetch();
+        $stmt =
+            $this->pdo->prepare($sql);
 
-        if ($usuario && password_verify($senha, $usuario['senha'])) {
-            unset($usuario['senha']);
-            return $usuario;
-        }
+        $stmt->execute([
+            $id
+        ]);
 
-        return null;
+        return $stmt->fetch();
     }
 }

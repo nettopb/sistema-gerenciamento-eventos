@@ -6,6 +6,10 @@
 
     <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
     <title>Novo Evento</title>
 
 </head>
@@ -40,7 +44,9 @@
                 name="titulo"
                 maxlength="150"
                 required
-                value="<?= htmlspecialchars($_POST['titulo'] ?? ''); ?>">
+                value="<?= htmlspecialchars(
+                    $_POST['titulo'] ?? ''
+                ); ?>">
 
         </p>
 
@@ -57,7 +63,9 @@
                 id="data_evento"
                 name="data_evento"
                 required
-                value="<?= htmlspecialchars($_POST['data_evento'] ?? ''); ?>">
+                value="<?= htmlspecialchars(
+                    $_POST['data_evento'] ?? ''
+                ); ?>">
 
         </p>
 
@@ -75,7 +83,9 @@
                 name="local"
                 maxlength="120"
                 required
-                value="<?= htmlspecialchars($_POST['local'] ?? ''); ?>">
+                value="<?= htmlspecialchars(
+                    $_POST['local'] ?? ''
+                ); ?>">
 
         </p>
 

@@ -11,15 +11,19 @@ class Evento
         $this->pdo = Database::conectar();
     }
 
-    public function salvar($titulo, $data, $local)
-    {
+    public function salvar(
+        $titulo,
+        $data,
+        $local
+    ) {
         $sql = '
             INSERT INTO eventos
             (titulo, data_evento, local)
             VALUES (?, ?, ?)
         ';
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt =
+            $this->pdo->prepare($sql);
 
         return $stmt->execute([
             $titulo,
@@ -37,10 +41,13 @@ class Evento
                 data_evento,
                 local
             FROM eventos
-            ORDER BY data_evento ASC, id ASC
+            ORDER BY
+                data_evento ASC,
+                id ASC
         ';
 
-        $stmt = $this->pdo->query($sql);
+        $stmt =
+            $this->pdo->query($sql);
 
         return $stmt->fetchAll();
     }
@@ -57,9 +64,12 @@ class Evento
             WHERE id = ?
         ';
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt =
+            $this->pdo->prepare($sql);
 
-        $stmt->execute([$id]);
+        $stmt->execute([
+            $id
+        ]);
 
         return $stmt->fetch();
     }
@@ -79,7 +89,8 @@ class Evento
             WHERE id = ?
         ';
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt =
+            $this->pdo->prepare($sql);
 
         return $stmt->execute([
             $titulo,
@@ -96,8 +107,11 @@ class Evento
             WHERE id = ?
         ';
 
-        $stmt = $this->pdo->prepare($sql);
+        $stmt =
+            $this->pdo->prepare($sql);
 
-        return $stmt->execute([$id]);
+        return $stmt->execute([
+            $id
+        ]);
     }
 }

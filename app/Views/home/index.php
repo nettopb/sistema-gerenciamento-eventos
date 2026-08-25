@@ -22,17 +22,42 @@
         Sistema de Gerenciamento de Eventos
     </h1>
 
-    <p>
-        <a href="<?= url('/login'); ?>">
-            Login
-        </a>
-    </p>
+    <?php if (Auth::autenticado()): ?>
 
-    <p>
-        <a href="<?= url('/eventos'); ?>">
-            Eventos
-        </a>
-    </p>
+        <?php $usuario = Auth::usuario(); ?>
+
+        <p>
+            Usuário:
+            <?= htmlspecialchars($usuario['nome']); ?>
+        </p>
+
+        <p>
+
+            <a href="<?= url('/eventos'); ?>">
+                Eventos
+            </a>
+
+        </p>
+
+        <p>
+
+            <a href="<?= url('/logout'); ?>">
+                Sair
+            </a>
+
+        </p>
+
+    <?php else: ?>
+
+        <p>
+
+            <a href="<?= url('/login'); ?>">
+                Login
+            </a>
+
+        </p>
+
+    <?php endif; ?>
 
 </body>
 

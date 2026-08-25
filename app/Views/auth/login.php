@@ -10,43 +10,63 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Login</title>
+    <title>Login - Sistema de Gerenciamento de Eventos</title>
 
 </head>
 
 <body>
 
-    <h1>Login</h1>
+    <h1>
+        Sistema de Gerenciamento de Eventos
+    </h1>
 
-    <form method="POST" action="<?= url('/login'); ?>">
+    <h2>Login</h2>
 
-        <label for="email">
-            E-mail:
-        </label>
+    <?php if (!empty($erro)): ?>
 
-        <br>
+        <p>
+            <?= htmlspecialchars($erro); ?>
+        </p>
 
-        <input
-            type="email"
-            id="email"
-            name="email"
-            required>
+    <?php endif; ?>
 
-        <br><br>
+    <form
+        method="POST"
+        action="<?= url('/login'); ?>">
 
-        <label for="senha">
-            Senha:
-        </label>
+        <p>
 
-        <br>
+            <label for="email">
+                E-mail
+            </label>
 
-        <input
-            type="password"
-            id="senha"
-            name="senha"
-            required>
+            <br>
 
-        <br><br>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email">
+
+        </p>
+
+        <p>
+
+            <label for="senha">
+                Senha
+            </label>
+
+            <br>
+
+            <input
+                type="password"
+                id="senha"
+                name="senha"
+                required
+                autocomplete="current-password">
+
+        </p>
 
         <button type="submit">
             Entrar
@@ -54,11 +74,13 @@
 
     </form>
 
-    <br>
+    <p>
 
-    <a href="<?= url('/'); ?>">
-        Voltar
-    </a>
+        <a href="<?= url('/'); ?>">
+            Voltar ao início
+        </a>
+
+    </p>
 
 </body>
 

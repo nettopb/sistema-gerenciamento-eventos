@@ -16,9 +16,32 @@
 
 <body>
 
+    <?php $usuario = Auth::usuario(); ?>
+
     <h1>Eventos</h1>
 
-    <?php if (($_GET['sucesso'] ?? '') === 'cadastrado'): ?>
+    <p>
+
+        Usuário:
+        <?= htmlspecialchars($usuario['nome']); ?>
+
+        |
+
+        Perfil:
+        <?= htmlspecialchars($usuario['perfil']); ?>
+
+        |
+
+        <a href="<?= url('/logout'); ?>">
+            Sair
+        </a>
+
+    </p>
+
+    <?php if (
+        ($_GET['sucesso'] ?? '') ===
+        'cadastrado'
+    ): ?>
 
         <p>
             Evento cadastrado com sucesso!
@@ -26,7 +49,10 @@
 
     <?php endif; ?>
 
-    <?php if (($_GET['sucesso'] ?? '') === 'atualizado'): ?>
+    <?php if (
+        ($_GET['sucesso'] ?? '') ===
+        'atualizado'
+    ): ?>
 
         <p>
             Evento atualizado com sucesso!
@@ -34,7 +60,10 @@
 
     <?php endif; ?>
 
-    <?php if (($_GET['sucesso'] ?? '') === 'excluido'): ?>
+    <?php if (
+        ($_GET['sucesso'] ?? '') ===
+        'excluido'
+    ): ?>
 
         <p>
             Evento excluído com sucesso!
@@ -42,7 +71,10 @@
 
     <?php endif; ?>
 
-    <?php if (($_GET['erro'] ?? '') === 'id_invalido'): ?>
+    <?php if (
+        ($_GET['erro'] ?? '') ===
+        'id_invalido'
+    ): ?>
 
         <p>
             ID do evento inválido.
@@ -50,7 +82,10 @@
 
     <?php endif; ?>
 
-    <?php if (($_GET['erro'] ?? '') === 'nao_encontrado'): ?>
+    <?php if (
+        ($_GET['erro'] ?? '') ===
+        'nao_encontrado'
+    ): ?>
 
         <p>
             Evento não encontrado.
@@ -58,7 +93,10 @@
 
     <?php endif; ?>
 
-    <?php if (($_GET['erro'] ?? '') === 'exclusao'): ?>
+    <?php if (
+        ($_GET['erro'] ?? '') ===
+        'exclusao'
+    ): ?>
 
         <p>
             Não foi possível excluir o evento.
@@ -66,13 +104,17 @@
 
     <?php endif; ?>
 
-    <p>
+    <?php if (Auth::ehAdmin()): ?>
 
-        <a href="<?= url('/eventos/novo'); ?>">
-            Novo Evento
-        </a>
+        <p>
 
-    </p>
+            <a href="<?= url('/eventos/novo'); ?>">
+                Novo Evento
+            </a>
+
+        </p>
+
+    <?php endif; ?>
 
     <?php if (empty($lista)): ?>
 
@@ -87,44 +129,57 @@
             <hr>
 
             <h2>
-                <?= htmlspecialchars($evento['titulo']); ?>
+                <?= htmlspecialchars(
+                    $evento['titulo']
+                ); ?>
             </h2>
 
             <p>
                 Data:
-                <?= htmlspecialchars($evento['data_evento']); ?>
+                <?= htmlspecialchars(
+                    $evento['data_evento']
+                ); ?>
             </p>
 
             <p>
                 Local:
-                <?= htmlspecialchars($evento['local']); ?>
+                <?= htmlspecialchars(
+                    $evento['local']
+                ); ?>
             </p>
 
-            <p>
+            <?php if (Auth::ehAdmin()): ?>
 
-                <a
-                    href="<?= url('/eventos/editar?id=' . (int) $evento['id']); ?>">
+                <p>
 
-                    Editar
+                    <a
+                        href="<?= url(
+                            '/eventos/editar?id=' .
+                            (int) $evento['id']
+                        ); ?>">
 
-                </a>
+                        Editar
 
-            </p>
+                    </a>
 
-            <form
-                method="POST"
-                action="<?= url('/eventos/excluir'); ?>">
+                </p>
 
-                <input
-                    type="hidden"
-                    name="id"
-                    value="<?= (int) $evento['id']; ?>">
+                <form
+                    method="POST"
+                    action="<?= url('/eventos/excluir'); ?>">
 
-                <button type="submit">
-                    Excluir
-                </button>
+                    <input
+                        type="hidden"
+                        name="id"
+                        value="<?= (int) $evento['id']; ?>">
 
-            </form>
+                    <button type="submit">
+                        Excluir
+                    </button>
+
+                </form>
+
+            <?php endif; ?>
 
         <?php endforeach; ?>
 

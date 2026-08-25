@@ -6,6 +6,10 @@
 
     <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
     <title>Editar Evento</title>
 
 </head>
@@ -45,7 +49,9 @@
                 name="titulo"
                 maxlength="150"
                 required
-                value="<?= htmlspecialchars($registro['titulo']); ?>">
+                value="<?= htmlspecialchars(
+                    $registro['titulo']
+                ); ?>">
 
         </p>
 
@@ -62,7 +68,9 @@
                 id="data_evento"
                 name="data_evento"
                 required
-                value="<?= htmlspecialchars($registro['data_evento']); ?>">
+                value="<?= htmlspecialchars(
+                    $registro['data_evento']
+                ); ?>">
 
         </p>
 
@@ -80,7 +88,9 @@
                 name="local"
                 maxlength="120"
                 required
-                value="<?= htmlspecialchars($registro['local']); ?>">
+                value="<?= htmlspecialchars(
+                    $registro['local']
+                ); ?>">
 
         </p>
 

@@ -1,11 +1,40 @@
 <?php
 
 require_once __DIR__ . '/../Models/Evento.php';
+require_once __DIR__ . '/../Core/Auth.php';
 
 class EventoController
 {
+    private function exigirLogin()
+    {
+        if (!Auth::autenticado()) {
+            header('Location: ' . url('/login'));
+            exit;
+        }
+    }
+
+    private function exigirAdmin()
+    {
+        if (!Auth::autenticado()) {
+            header('Location: ' . url('/login'));
+            exit;
+        }
+
+        if (!Auth::ehAdmin()) {
+            http_response_code(403);
+
+            echo '<h1>403 - Acesso negado</h1>';
+            echo '<p>Você não possui permissão para realizar esta operação.</p>';
+            echo '<p><a href="' . url('/eventos') . '">Voltar para eventos</a></p>';
+
+            exit;
+        }
+    }
+
     public function index()
     {
+        $this->exigirLogin();
+
         $evento = new Evento();
 
         $lista = $evento->listar();
@@ -15,6 +44,8 @@ class EventoController
 
     public function create()
     {
+        $this->exigirAdmin();
+
         $erro = null;
 
         require __DIR__ . '/../Views/evento/create.php';
@@ -22,12 +53,13 @@ class EventoController
 
     public function store()
     {
+        $this->exigirAdmin();
+
         $titulo = trim($_POST['titulo'] ?? '');
         $data = trim($_POST['data_evento'] ?? '');
         $local = trim($_POST['local'] ?? '');
 
         if ($titulo === '' || $data === '' || $local === '') {
-
             $erro = 'Todos os campos são obrigatórios.';
 
             require __DIR__ . '/../Views/evento/create.php';
@@ -36,7 +68,6 @@ class EventoController
         }
 
         if (mb_strlen($titulo) > 150) {
-
             $erro = 'O título deve possuir no máximo 150 caracteres.';
 
             require __DIR__ . '/../Views/evento/create.php';
@@ -45,7 +76,6 @@ class EventoController
         }
 
         if (mb_strlen($local) > 120) {
-
             $erro = 'O local deve possuir no máximo 120 caracteres.';
 
             require __DIR__ . '/../Views/evento/create.php';
@@ -53,16 +83,12 @@ class EventoController
             return;
         }
 
-        $dataValida = DateTime::createFromFormat(
-            'Y-m-d',
-            $data
-        );
+        $dataValida = DateTime::createFromFormat('Y-m-d', $data);
 
         if (
             !$dataValida ||
             $dataValida->format('Y-m-d') !== $data
         ) {
-
             $erro = 'Data inválida.';
 
             require __DIR__ . '/../Views/evento/create.php';
@@ -79,7 +105,6 @@ class EventoController
         );
 
         if (!$resultado) {
-
             $erro = 'Não foi possível cadastrar o evento.';
 
             require __DIR__ . '/../Views/evento/create.php';
@@ -97,6 +122,8 @@ class EventoController
 
     public function edit()
     {
+        $this->exigirAdmin();
+
         $id = $_GET['id'] ?? null;
 
         if (
@@ -104,7 +131,6 @@ class EventoController
             !filter_var($id, FILTER_VALIDATE_INT) ||
             $id <= 0
         ) {
-
             header(
                 'Location: ' .
                 url('/eventos?erro=id_invalido')
@@ -118,7 +144,6 @@ class EventoController
         $registro = $evento->buscarPorId($id);
 
         if (!$registro) {
-
             header(
                 'Location: ' .
                 url('/eventos?erro=nao_encontrado')
@@ -134,6 +159,8 @@ class EventoController
 
     public function update()
     {
+        $this->exigirAdmin();
+
         $id = $_POST['id'] ?? null;
 
         $titulo = trim($_POST['titulo'] ?? '');
@@ -152,7 +179,6 @@ class EventoController
             !filter_var($id, FILTER_VALIDATE_INT) ||
             $id <= 0
         ) {
-
             $erro = 'ID do evento inválido.';
 
             require __DIR__ . '/../Views/evento/edit.php';
@@ -161,7 +187,6 @@ class EventoController
         }
 
         if ($titulo === '' || $data === '' || $local === '') {
-
             $erro = 'Todos os campos são obrigatórios.';
 
             require __DIR__ . '/../Views/evento/edit.php';
@@ -170,7 +195,6 @@ class EventoController
         }
 
         if (mb_strlen($titulo) > 150) {
-
             $erro = 'O título deve possuir no máximo 150 caracteres.';
 
             require __DIR__ . '/../Views/evento/edit.php';
@@ -179,7 +203,6 @@ class EventoController
         }
 
         if (mb_strlen($local) > 120) {
-
             $erro = 'O local deve possuir no máximo 120 caracteres.';
 
             require __DIR__ . '/../Views/evento/edit.php';
@@ -187,16 +210,12 @@ class EventoController
             return;
         }
 
-        $dataValida = DateTime::createFromFormat(
-            'Y-m-d',
-            $data
-        );
+        $dataValida = DateTime::createFromFormat('Y-m-d', $data);
 
         if (
             !$dataValida ||
             $dataValida->format('Y-m-d') !== $data
         ) {
-
             $erro = 'Data inválida.';
 
             require __DIR__ . '/../Views/evento/edit.php';
@@ -206,11 +225,9 @@ class EventoController
 
         $evento = new Evento();
 
-        $registroExistente =
-            $evento->buscarPorId($id);
+        $registroExistente = $evento->buscarPorId($id);
 
         if (!$registroExistente) {
-
             $erro = 'Evento não encontrado.';
 
             require __DIR__ . '/../Views/evento/edit.php';
@@ -226,7 +243,6 @@ class EventoController
         );
 
         if (!$resultado) {
-
             $erro = 'Não foi possível atualizar o evento.';
 
             require __DIR__ . '/../Views/evento/edit.php';
@@ -244,6 +260,8 @@ class EventoController
 
     public function delete()
     {
+        $this->exigirAdmin();
+
         $id = $_POST['id'] ?? null;
 
         if (
@@ -251,7 +269,6 @@ class EventoController
             !filter_var($id, FILTER_VALIDATE_INT) ||
             $id <= 0
         ) {
-
             header(
                 'Location: ' .
                 url('/eventos?erro=id_invalido')
@@ -265,7 +282,6 @@ class EventoController
         $registro = $evento->buscarPorId($id);
 
         if (!$registro) {
-
             header(
                 'Location: ' .
                 url('/eventos?erro=nao_encontrado')
@@ -277,7 +293,6 @@ class EventoController
         $resultado = $evento->excluir($id);
 
         if (!$resultado) {
-
             header(
                 'Location: ' .
                 url('/eventos?erro=exclusao')
