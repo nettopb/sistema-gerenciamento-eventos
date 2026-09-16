@@ -1,11 +1,9 @@
 /vendor/
-
-/.env
-
-/uploads/*
-!/uploads/.gitkeep
-
+.env
 *.log
-
+/storage/logs/*.log
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
+/config/config.local.php

@@ -1,51 +1,12 @@
 <?php
 
-$router->get(
-    '/',
-    'HomeController@index'
-);
-
-$router->get(
-    '/login',
-    'AuthController@login'
-);
-
-$router->post(
-    '/login',
-    'AuthController@autenticar'
-);
-
-$router->get(
-    '/logout',
-    'AuthController@logout'
-);
-
-$router->get(
-    '/eventos',
-    'EventoController@index'
-);
-
-$router->get(
-    '/eventos/novo',
-    'EventoController@create'
-);
-
-$router->post(
-    '/eventos/salvar',
-    'EventoController@store'
-);
-
-$router->get(
-    '/eventos/editar',
-    'EventoController@edit'
-);
-
-$router->post(
-    '/eventos/atualizar',
-    'EventoController@update'
-);
-
-$router->post(
-    '/eventos/excluir',
-    'EventoController@delete'
-);
+$router->get('/', 'HomeController@index');
+$router->get('/login', 'AuthController@login');
+$router->post('/login', 'AuthController@autenticar');
+$router->post('/logout', 'AuthController@logout');
+$router->get('/eventos', 'EventoController@index');
+$router->get('/eventos/novo', 'EventoController@create');
+$router->post('/eventos/salvar', 'EventoController@store');
+$router->get('/eventos/editar', 'EventoController@edit');
+$router->post('/eventos/atualizar', 'EventoController@update');
+$router->post('/eventos/excluir', 'EventoController@delete');

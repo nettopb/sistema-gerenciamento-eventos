@@ -1,200 +1,61 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eventos</title>
-
+    <link rel="stylesheet" href="<?= url('/assets/css/style.css'); ?>">
 </head>
-
 <body>
-
+<header class="header"><div class="container"><h1>Sistema de Gerenciamento de Eventos</h1></div></header>
+<main><div class="container">
     <?php $usuario = Auth::usuario(); ?>
+    <div class="card">
+        <div class="user-bar">
+            <div>Usuário: <strong><?= htmlspecialchars($usuario['nome']); ?></strong> | Perfil: <strong><?= htmlspecialchars($usuario['perfil']); ?></strong></div>
+            <form method="POST" action="<?= url('/logout'); ?>">
+                <?= CSRF::campo(); ?>
+                <button class="btn-secondary" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
 
-    <h1>Eventos</h1>
+    <div class="card">
+        <h2>Eventos</h2>
+        <?php if (($_GET['sucesso'] ?? '') === 'cadastrado'): ?><div class="alert alert-success">Evento cadastrado com sucesso!</div><?php endif; ?>
+        <?php if (($_GET['sucesso'] ?? '') === 'atualizado'): ?><div class="alert alert-success">Evento atualizado com sucesso!</div><?php endif; ?>
+        <?php if (($_GET['sucesso'] ?? '') === 'excluido'): ?><div class="alert alert-success">Evento excluído com sucesso!</div><?php endif; ?>
+        <?php if (($_GET['erro'] ?? '') === 'id_invalido'): ?><div class="alert alert-danger">ID do evento inválido.</div><?php endif; ?>
+        <?php if (($_GET['erro'] ?? '') === 'nao_encontrado'): ?><div class="alert alert-danger">Evento não encontrado.</div><?php endif; ?>
+        <?php if (($_GET['erro'] ?? '') === 'exclusao'): ?><div class="alert alert-danger">Não foi possível excluir o evento.</div><?php endif; ?>
 
-    <p>
+        <?php if (Auth::ehAdmin()): ?>
+            <div class="actions"><a class="btn" href="<?= url('/eventos/novo'); ?>">Novo Evento</a></div>
+        <?php endif; ?>
 
-        Usuário:
-        <?= htmlspecialchars($usuario['nome']); ?>
-
-        |
-
-        Perfil:
-        <?= htmlspecialchars($usuario['perfil']); ?>
-
-        |
-
-        <a href="<?= url('/logout'); ?>">
-            Sair
-        </a>
-
-    </p>
-
-    <?php if (
-        ($_GET['sucesso'] ?? '') ===
-        'cadastrado'
-    ): ?>
-
-        <p>
-            Evento cadastrado com sucesso!
-        </p>
-
-    <?php endif; ?>
-
-    <?php if (
-        ($_GET['sucesso'] ?? '') ===
-        'atualizado'
-    ): ?>
-
-        <p>
-            Evento atualizado com sucesso!
-        </p>
-
-    <?php endif; ?>
-
-    <?php if (
-        ($_GET['sucesso'] ?? '') ===
-        'excluido'
-    ): ?>
-
-        <p>
-            Evento excluído com sucesso!
-        </p>
-
-    <?php endif; ?>
-
-    <?php if (
-        ($_GET['erro'] ?? '') ===
-        'id_invalido'
-    ): ?>
-
-        <p>
-            ID do evento inválido.
-        </p>
-
-    <?php endif; ?>
-
-    <?php if (
-        ($_GET['erro'] ?? '') ===
-        'nao_encontrado'
-    ): ?>
-
-        <p>
-            Evento não encontrado.
-        </p>
-
-    <?php endif; ?>
-
-    <?php if (
-        ($_GET['erro'] ?? '') ===
-        'exclusao'
-    ): ?>
-
-        <p>
-            Não foi possível excluir o evento.
-        </p>
-
-    <?php endif; ?>
-
-    <?php if (Auth::ehAdmin()): ?>
-
-        <p>
-
-            <a href="<?= url('/eventos/novo'); ?>">
-                Novo Evento
-            </a>
-
-        </p>
-
-    <?php endif; ?>
-
-    <?php if (empty($lista)): ?>
-
-        <p>
-            Nenhum evento cadastrado.
-        </p>
-
-    <?php else: ?>
-
-        <?php foreach ($lista as $evento): ?>
-
-            <hr>
-
-            <h2>
-                <?= htmlspecialchars(
-                    $evento['titulo']
-                ); ?>
-            </h2>
-
-            <p>
-                Data:
-                <?= htmlspecialchars(
-                    $evento['data_evento']
-                ); ?>
-            </p>
-
-            <p>
-                Local:
-                <?= htmlspecialchars(
-                    $evento['local']
-                ); ?>
-            </p>
-
-            <?php if (Auth::ehAdmin()): ?>
-
-                <p>
-
-                    <a
-                        href="<?= url(
-                            '/eventos/editar?id=' .
-                            (int) $evento['id']
-                        ); ?>">
-
-                        Editar
-
-                    </a>
-
-                </p>
-
-                <form
-                    method="POST"
-                    action="<?= url('/eventos/excluir'); ?>">
-
-                    <input
-                        type="hidden"
-                        name="id"
-                        value="<?= (int) $evento['id']; ?>">
-
-                    <button type="submit">
-                        Excluir
-                    </button>
-
-                </form>
-
-            <?php endif; ?>
-
-        <?php endforeach; ?>
-
-    <?php endif; ?>
-
-    <hr>
-
-    <p>
-
-        <a href="<?= url('/'); ?>">
-            Voltar ao início
-        </a>
-
-    </p>
-
+        <?php if (empty($lista)): ?>
+            <p>Nenhum evento cadastrado.</p>
+        <?php else: ?>
+            <?php foreach ($lista as $evento): ?>
+                <article class="evento">
+                    <h3><?= htmlspecialchars($evento['titulo']); ?></h3>
+                    <p><strong>Data:</strong> <?= htmlspecialchars($evento['data_evento']); ?></p>
+                    <p><strong>Local:</strong> <?= htmlspecialchars($evento['local']); ?></p>
+                    <?php if (Auth::ehAdmin()): ?>
+                        <div class="actions">
+                            <a class="btn" href="<?= url('/eventos/editar?id=' . (int) $evento['id']); ?>">Editar</a>
+                            <form method="POST" action="<?= url('/eventos/excluir'); ?>" onsubmit="return confirm('Tem certeza que deseja excluir este evento?');">
+                                <?= CSRF::campo(); ?>
+                                <input type="hidden" name="id" value="<?= (int) $evento['id']; ?>">
+                                <button class="btn-danger" type="submit">Excluir</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+                </article>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+</div></main>
+<footer class="footer">Sistema de Gerenciamento de Eventos</footer>
 </body>
-
 </html>

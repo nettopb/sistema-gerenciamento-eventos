@@ -1,106 +1,58 @@
 <?php
 
+require_once __DIR__ . '/../Core/Controller.php';
 require_once __DIR__ . '/../Models/Usuario.php';
 require_once __DIR__ . '/../Core/Auth.php';
+require_once __DIR__ . '/../Core/CSRF.php';
 
-class AuthController
+class AuthController extends Controller
 {
     public function login()
     {
         if (Auth::autenticado()) {
-
-            header(
-                'Location: ' .
-                url('/eventos')
-            );
-
-            exit;
+            $this->redirect('/eventos');
         }
 
-        $erro = null;
-
-        require __DIR__ .
-            '/../Views/auth/login.php';
+        $this->view('auth/login', ['erro' => null]);
     }
 
     public function autenticar()
     {
-        $email =
-            trim($_POST['email'] ?? '');
+        if (!CSRF::validar($_POST['csrf_token'] ?? null)) {
+            $this->abort(403, 'Token de segurança inválido. Atualize a página e tente novamente.');
+        }
 
-        $senha =
-            $_POST['senha'] ?? '';
+        $email = trim($_POST['email'] ?? '');
+        $senha = $_POST['senha'] ?? '';
 
-        if (
-            $email === '' ||
-            $senha === ''
-        ) {
-            $erro =
-                'Informe e-mail e senha.';
-
-            require __DIR__ .
-                '/../Views/auth/login.php';
-
+        if ($email === '' || $senha === '') {
+            $this->view('auth/login', ['erro' => 'Informe e-mail e senha.']);
             return;
         }
 
-        if (
-            !filter_var(
-                $email,
-                FILTER_VALIDATE_EMAIL
-            )
-        ) {
-            $erro =
-                'Informe um e-mail válido.';
-
-            require __DIR__ .
-                '/../Views/auth/login.php';
-
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->view('auth/login', ['erro' => 'Informe um e-mail válido.']);
             return;
         }
 
-        $usuarioModel =
-            new Usuario();
+        $usuario = (new Usuario())->buscarPorEmail($email);
 
-        $usuario =
-            $usuarioModel
-                ->buscarPorEmail($email);
-
-        if (
-            !$usuario ||
-            !password_verify(
-                $senha,
-                $usuario['senha']
-            )
-        ) {
-            $erro =
-                'E-mail ou senha inválidos.';
-
-            require __DIR__ .
-                '/../Views/auth/login.php';
-
+        if (!$usuario || !password_verify($senha, $usuario['senha'])) {
+            $this->view('auth/login', ['erro' => 'E-mail ou senha inválidos.']);
             return;
         }
 
         Auth::login($usuario);
-
-        header(
-            'Location: ' .
-            url('/eventos')
-        );
-
-        exit;
+        $this->redirect('/eventos');
     }
 
     public function logout()
     {
+        if (!CSRF::validar($_POST['csrf_token'] ?? null)) {
+            $this->abort(403, 'Token de segurança inválido.');
+        }
+
         Auth::logout();
-
-        header(
-            'Location: ' .
-            url('/login')
-        );
-
-        exit;
+        $this->redirect('/login');
     }
 }

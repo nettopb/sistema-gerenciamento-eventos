@@ -1,12 +1,13 @@
 <?php
 
+require_once __DIR__ . '/../Core/Controller.php';
 require_once __DIR__ . '/../Core/Auth.php';
+require_once __DIR__ . '/../Core/CSRF.php';
 
-class HomeController
+class HomeController extends Controller
 {
     public function index()
     {
-        require __DIR__ .
-            '/../Views/home/index.php';
+        $this->view('home/index');
     }
 }

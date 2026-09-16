@@ -1,108 +1,24 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Evento</title>
-
+    <link rel="stylesheet" href="<?= url('/assets/css/style.css'); ?>">
 </head>
-
 <body>
-
-    <h1>Novo Evento</h1>
-
-    <?php if (!empty($erro)): ?>
-
-        <p>
-            <?= htmlspecialchars($erro); ?>
-        </p>
-
-    <?php endif; ?>
-
-    <form
-        method="POST"
-        action="<?= url('/eventos/salvar'); ?>">
-
-        <p>
-
-            <label for="titulo">
-                Título
-            </label>
-
-            <br>
-
-            <input
-                type="text"
-                id="titulo"
-                name="titulo"
-                maxlength="150"
-                required
-                value="<?= htmlspecialchars(
-                    $_POST['titulo'] ?? ''
-                ); ?>">
-
-        </p>
-
-        <p>
-
-            <label for="data_evento">
-                Data
-            </label>
-
-            <br>
-
-            <input
-                type="date"
-                id="data_evento"
-                name="data_evento"
-                required
-                value="<?= htmlspecialchars(
-                    $_POST['data_evento'] ?? ''
-                ); ?>">
-
-        </p>
-
-        <p>
-
-            <label for="local">
-                Local
-            </label>
-
-            <br>
-
-            <input
-                type="text"
-                id="local"
-                name="local"
-                maxlength="120"
-                required
-                value="<?= htmlspecialchars(
-                    $_POST['local'] ?? ''
-                ); ?>">
-
-        </p>
-
-        <button type="submit">
-            Salvar
-        </button>
-
+<header class="header"><div class="container"><h1>Sistema de Gerenciamento de Eventos</h1></div></header>
+<main><div class="container"><div class="card">
+    <h2>Novo Evento</h2>
+    <?php if (!empty($erro)): ?><div class="alert alert-danger"><?= htmlspecialchars($erro); ?></div><?php endif; ?>
+    <form method="POST" action="<?= url('/eventos/salvar'); ?>">
+        <?= CSRF::campo(); ?>
+        <div class="form-group"><label for="titulo">Título</label><input type="text" id="titulo" name="titulo" maxlength="150" required value="<?= htmlspecialchars($_POST['titulo'] ?? ''); ?>"></div>
+        <div class="form-group"><label for="data_evento">Data</label><input type="date" id="data_evento" name="data_evento" required value="<?= htmlspecialchars($_POST['data_evento'] ?? ''); ?>"></div>
+        <div class="form-group"><label for="local">Local</label><input type="text" id="local" name="local" maxlength="120" required value="<?= htmlspecialchars($_POST['local'] ?? ''); ?>"></div>
+        <button type="submit">Salvar</button>
+        <a class="btn btn-secondary" href="<?= url('/eventos'); ?>">Voltar</a>
     </form>
-
-    <p>
-
-        <a href="<?= url('/eventos'); ?>">
-            Voltar
-        </a>
-
-    </p>
-
+</div></div></main>
 </body>
-
 </html>
